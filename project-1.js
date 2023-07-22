@@ -1,56 +1,35 @@
-// Variables
-let btn = document.querySelector("#new-quote");
-let quote = document.querySelector(".quote");
-let person = document.querySelector(".person");
+// Fetch quotes from the API
+async function fetchQuotes() {
+  try {
+    const response = await fetch("https://type.fit/api/quotes");
+    const quotes = await response.json();
+    return quotes;
+  } catch (error) {
+    console.error("Error fetching quotes:", error);
+    return [];
+  }
+}
 
-const quotes = [
-  {
-    quote: `"The best way to find yourself is to lose yourself in the service of others."`,
-    person: ` Mahatma Gandhi`,
-  },
-  {
-    quote: `"If you want to live a happy life, tie it to a goal, not to people or things."`,
-    person: ` Albert Einstein`,
-  },
-  {
-    quote: `"At his best, man is the noblest of all animals; separated from law and justice he is the worst."`,
-    person: `Aristotle`,
-  },
-  {
-    quote: `"Your time is limited, so don't waste it living someone else's life."`,
-    person: ` Steve Jobs`,
-  },
-  {
-    quote: `"Tell me and I forget. Teach me and I remember. Involve me and I learn."`,
-    person: ` Benjamin Franklin`,
-  },
-  {
-    quote: `"If you look at what you have in life, you'll always have more. If you look at what you don't have in life, you'll never have enough."`,
-    person: `Oprah Winfrey`,
-  },
-  {
-    quote: `"t does not matter how slowly you go as long as you do not stop."`,
-    person: `Confucius`,
-  },
-  {
-    quote: `"Our lives begin to end the day we become silent about things that matter."`,
-    person: `Martin Luther King, Jr.`,
-  },
-  {
-    quote: `"Remember that not getting what you want is sometimes a wonderful stroke of luck."`,
-    person: `Dalai Lama`,
-  },
-  {
-    quote: `"The journey of a thousand miles begins with one step."`,
-    person: `Lao Tzu`,
-  },
-];
+// Function to set a random quote and person
+function setRandomQuote() {
+  fetchQuotes()
+    .then((quotes) => {
+      if (quotes.length > 0) {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const quote = quotes[randomIndex].text;
+        const person = quotes[randomIndex].author || "Unknown";
 
-btn.addEventListener("click", function () {
-  let random = Math.floor(Math.random() * quotes.length);
-  quote.innerText = quotes[random].quote;
-  person.innerText = quotes[random].person;
-});
-btn.addEventListener("click", function () {
-  console.log("Button clicked!");
-});
+        document.querySelector(".quote").textContent = `"${quote}"`;
+        document.querySelector(".person").textContent = person;
+      }
+    })
+    .catch((error) => {
+      console.error("Error setting random quote:", error);
+    });
+}
+
+// Event listener for the "New Quote" button
+document.querySelector("#new-quote").addEventListener("click", setRandomQuote);
+
+// Load a random quote on page load
+setRandomQuote();
